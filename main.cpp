@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <utility>
 #include <unistd.h>
+#include <cstdlib>
 
 template <class T>
 class Point
@@ -23,6 +24,15 @@ enum class Direction
     Left,
     Right,
     Stay
+};
+
+class Food
+{
+    public:
+        Food(const Point<unsigned>& p) : pos_(p) {}
+        const Point<unsigned>& GetPos() const { return pos_; }
+    private:
+        Point<unsigned> pos_;
 };
 
 class Yop
@@ -51,15 +61,22 @@ class Yop
             }
         }
 
+        void Reward(int r) {}
+        void Smell(const Food* food) { food_ = food; }
+
     private:
         Point<unsigned> pos_;
         Direction move_;
+        const Food* food_;
 };
 
 class World
 {
     public:
-        World(unsigned w, unsigned h) : size_(w, h), yop_(Point<unsigned>(w / 2, h / 2)) {}
+        World(unsigned w, unsigned h) :
+            size_(w, h),
+            yop_(Point<unsigned>(w / 2, h / 2)),
+            food_(Point<unsigned>(rand() % w, rand() % h)) {}
 
         void Draw()
         {
@@ -75,6 +92,8 @@ class World
                 {
                     if (yop_.GetPos().x() == j && yop_.GetPos().y() == i)
                         putchar('X');
+                    else if (food_.GetPos().x() == j && food_.GetPos().y() == i)
+                        putchar('O');
                     else
                         putchar(' ');
                 }
@@ -90,17 +109,31 @@ class World
         void Update()
         {
             auto move = yop_.NextPos();
+
             if (move.x() >= 0 && move.x() < size_.x() && move.y() >= 0 && move.y() < size_.y())
                 yop_.SetPos(move);
+
+            if (move.x() == food_.GetPos().x() && move.y() == food_.GetPos().y())
+            {
+                food_ = Food(Point<unsigned>(rand() % size_.x(), rand() % size_.y()));
+                yop_.Reward(1000);
+            }
+            else
+            {
+                yop_.Reward(-5);
+            }
+            yop_.Smell(&food_);
         }
 
     private:
         const Point<unsigned int> size_;
         Yop yop_;
+        Food food_;
 };
 
 int main()
 {
+    srand(0);
     World w(20, 20);
     while (1)
     {
