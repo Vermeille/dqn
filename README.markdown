@@ -23,4 +23,4 @@ a human speed game drawing.
 
 A pretrained network is in brain.net.
 
-![tty.gif]
+![trained net](tty.gif)
