@@ -248,7 +248,6 @@ int main(int argc, char** argv)
     if (demo || HasOption("--no-learning", argc, argv))
         yop.StopLearning();
 
-    Gnuplot g;
     while (true)
     {
         if (draw)
@@ -263,7 +262,6 @@ int main(int argc, char** argv)
             {
                 history << yop.GetScore() - last_score << "\n";
                 history.flush();
-                g << "plot \"score.dat\" with lines\n";
                 std::cout << (iter / 1000) << ", " << yop.GetScore() - last_score << "\n";
                 last_score = yop.GetScore();
             }
