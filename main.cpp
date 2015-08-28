@@ -4,8 +4,6 @@
 #include <cstdlib>
 #include <ctime>
 
-#include "gnuplot-iostream.h"
-
 static const int kWorldSize = 20;
 static const int kMemorySize = 1000000;
 static const int kReplaySize = 500;
